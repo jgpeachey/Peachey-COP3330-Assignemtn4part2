@@ -18,9 +18,6 @@ public class HelpWindowController {
 
     @FXML
     private void goToMainWindow(Event e) throws IOException {
-        Stage stage = (Stage) doneButton.getScene().getWindow();
-        Parent root = FXMLLoader.load(getClass().getResource("MainWindow.fxml"));
-        stage.setTitle("Todo List");
-        stage.setScene(new Scene(root));
+        ((Stage) doneButton.getScene().getWindow()).close();
     }
 }

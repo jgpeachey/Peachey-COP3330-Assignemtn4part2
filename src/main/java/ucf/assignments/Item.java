@@ -51,4 +51,14 @@ public class Item {
         this.setDescription(description);
         this.setMark(mark);
     }
+
+    @Override
+    public String toString() {
+        return "Item{" +
+                "name='" + name + '\'' +
+                ", date=" + date +
+                ", description='" + description + '\'' +
+                ", mark=" + mark +
+                '}';
+    }
 }

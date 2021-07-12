@@ -21,7 +21,15 @@ public class ListCentral {
     //create a main list of items
     private ObservableList<Item> list= FXCollections.observableArrayList();
     //create a index conversion
-    private ArrayList<Integer> indexConvert = new ArrayList();
+
+    public int indexConverter(int index){
+        int i = 0;
+        //convert index
+        while (displayList.get(index) != list.get(i)){
+            i++;
+        }
+        return i;
+    }
 
     //get the displayed list
     public ObservableList<Item> getList(){
@@ -37,8 +45,7 @@ public class ListCentral {
 
     public ObservableList<Item> setList(ObservableList<Item> newList){
         //clear any existing list
-        list.removeAll();
-        displayList.removeAll();
+        removeAllItems();
         //add loaded list
         list.addAll(newList);
         displayList.addAll(newList);
@@ -46,56 +53,59 @@ public class ListCentral {
         return list;
     }
 
-    public void addItem(String name, String description, LocalDate date){
+    public void addItem(Item item){
         //add new item to list
-        list.add(new Item(name, description, date, false));
-        displayList.add(new Item(name, description, date, false));
+        list.add(item);
+        displayList.add(item);
     }
 
     public ObservableList removeItem(int index){
         // remove item from display list
         displayList.remove(index);
         // remove item from list
-        list.remove(index);
+        list.remove(indexConverter(index));
         return list;
     }
 
     public ObservableList removeAllItems(){
-        displayList.removeAll();
-        list.removeAll();
+        //remove everything from every list
+        displayList.remove(0, displayList.size());
+        list.remove(0, list.size());
         return list;
     }
 
     public void getItemInfo(int index){
-        index = indexConvert.get(index);
-        list.get(index);
+        list.get(indexConverter(index));
     }
 
     public Item editItemInfo(int index, String name, String description, LocalDate date){
-        index = indexConvert.get(index);
-        list.get(index).setName(name);
-        list.get(index).setDescription(description);
-        list.get(index).setDate(date);
-        return list.get(index);
+        displayList.get(index).setName(name);
+        displayList.get(index).setDescription(description);
+        displayList.get(index).setDate(date);
+        list.get(indexConverter(index)).setName(name);
+        list.get(indexConverter(index)).setDescription(description);
+        list.get(indexConverter(index)).setDate(date);
+        return list.get(indexConverter(index));
     }
 
     public boolean markComplete(int index){
-        index = indexConvert.get(index);
-        list.get(index).setMark(true);
+        displayList.get(index).setMark(true);
+        System.out.println(displayList.get(index));
+        list.get(indexConverter(index)).setMark(true);
+        System.out.println(list.get(indexConverter(index)));
         return list.get(index).isMark();
     }
 
     public boolean markIncomplete(int index){
-        index = indexConvert.get(index);
-        list.get(index).setMark(false);
+        //set incomplete
+        displayList.get(index).setMark(false);
+        list.get(indexConverter(index)).setMark(false);
         return list.get(index).isMark();
     }
 
     public void sortItems(String sortBy){
         // create temp list for sorting
         ObservableList<Item> sorted = FXCollections.observableArrayList();
-        // clear index Converter list
-        indexConvert.removeAll(indexConvert);
         for (int i = 0; i < list.size(); i++) {
             // determine if item is complete
             boolean complete = list.get(i).isMark();
@@ -103,14 +113,12 @@ public class ListCentral {
             if(sortBy.equals("Complete")){
                 if (complete) {
                     sorted.add(list.get(i));
-                    indexConvert.add(i);
                 }
             }
             //sort by incomplete
             else if (sortBy.equals("Incomplete")){
                 if (!complete) {
                     sorted.add(list.get(i));
-                    indexConvert.add(i);
                 }
             }
             // sort by all
@@ -119,7 +127,7 @@ public class ListCentral {
             }
         }
         // clear displayed list
-        displayList.removeAll();
+        displayList.remove(0, displayList.size());
         // set displayed list equal to sorted list
         displayList.addAll(sorted);
     }

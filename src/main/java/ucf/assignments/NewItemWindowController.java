@@ -33,7 +33,6 @@ public class NewItemWindowController {
 
     @FXML
     private void clickedSave(Event e) throws IOException {
-        // make sure onItemAdded isn't empty
         if (nameTextField.getText().equals("") || descriptionTextField.getText().equals("") || datePicker.getValue() == null){
             createDialogue("Please enter data for all fields");
         }
@@ -41,6 +40,7 @@ public class NewItemWindowController {
             createDialogue("Description cannot be longer than 256 characters");
         }
         else {
+            // make sure onItemAdded isn't empty
             if (onItemAdded != null) {
                 //call on item added
                 onItemAdded.addItem(new Item(nameTextField.getText(), descriptionTextField.getText(), datePicker.getValue(), false));
@@ -50,6 +50,7 @@ public class NewItemWindowController {
         }
     }
 
+    @FXML
     private void createDialogue(String message){
         //Creating a dialog
         Dialog<String> dialog = new Dialog<String>();

@@ -14,7 +14,7 @@ public class EditItemWindowController {
 
     //button set up
     @FXML
-    Button saveButton;
+    Button saveEditButton;
     //date picker set up
     @FXML
     DatePicker datePicker;
@@ -23,17 +23,17 @@ public class EditItemWindowController {
     TextField nameTextField;
     @FXML
     TextField descriptionTextField;
-/*
+
     private MainWindowController.OnItemEdited onItemEdited;
 
     @FXML
-    private void clickedSave(Event e) throws IOException {
+    private void clickedEditSave(Event e) throws IOException {
         // make sure onItemEdited isn't empty
         if (onItemEdited != null) {
             //call on item edited
             onItemEdited.editItem(nameTextField.getText(), descriptionTextField.getText(), datePicker.getValue());
             //go back to main window
-            ((Stage) saveButton.getScene().getWindow()).close();
+            ((Stage) saveEditButton.getScene().getWindow()).close();
         }
     }
 
@@ -42,7 +42,6 @@ public class EditItemWindowController {
         this.onItemEdited = onItemEdited;
     }
 
- */
 }
 
 

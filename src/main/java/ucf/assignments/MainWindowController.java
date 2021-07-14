@@ -10,9 +10,11 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
@@ -21,7 +23,10 @@ import java.util.ResourceBundle;
 public class MainWindowController implements Initializable {
 
     ListCentral listCentral = new ListCentral();
+    FileCentral fileCentral = new FileCentral();
 
+    //file chooser setup
+    FileChooser fileChooser = new FileChooser();
 
     //button set ups
     @FXML
@@ -45,6 +50,7 @@ public class MainWindowController implements Initializable {
     @FXML
     Button loadListButton;
 
+    //tableview set up
     @FXML
     TableView<Item> tableView;
     @FXML
@@ -58,12 +64,16 @@ public class MainWindowController implements Initializable {
 
     ObservableList<Item> list = FXCollections.observableArrayList();
 
+    //choice box setup
     @FXML
     private ChoiceBox<String> choiceBox;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        //set up file chooser
+        fileChooser.setInitialDirectory(new File("C:\\"));
         //set up choice box
+        choiceBox.setValue("All");
         choiceBox.getItems().add("All");
         choiceBox.getItems().add("Completed");
         choiceBox.getItems().add("Incomplete");
@@ -76,8 +86,44 @@ public class MainWindowController implements Initializable {
         //load data from list
         tableView.setItems(listCentral.getList());
     }
+//misc methods
+    public int getTableIndex(){
+        int index = tableView.getSelectionModel().getSelectedIndex();
+        return index;
+    }
 
-//button controls
+//interfaces and corresponding methods
+    //set up interface for adding item
+    interface OnItemEdited{
+        void editItem(String name, String description, LocalDate date);
+    }
+
+    //override editItem interface method
+    OnItemEdited onItemEdited = new OnItemEdited() {
+        @Override
+        public void editItem(String name, String description, LocalDate date) {
+            listCentral.editItemInfo(getTableIndex(), name, description, date);
+            tableView.refresh();
+        }
+    };
+
+    //set up interface for adding item
+    interface OnItemAdded{
+        void addItem(Item item);
+    }
+
+    //override addItem interface method
+    OnItemAdded onItemAdded = new OnItemAdded() {
+        @Override
+        public void addItem(Item item) {
+            list.add(item);
+            listCentral.addItem(item);
+            tableView.refresh();
+        }
+    };
+
+
+    //button controls
     //load new windows
     @FXML
     private void clickedHelp(Event e) throws IOException {
@@ -98,87 +144,76 @@ public class MainWindowController implements Initializable {
         //set up controller
         NewItemWindowController newController = root.getController();
         newController.setOnItemAdded(onItemAdded);
-//        EditItemWindowController editController = root.getController();
-//        editController.setOnItemEdited(onItemEdited);
         //show window
         stage.show();
     }
 
-    //set up interface for adding item
-    interface OnItemAdded{
-        void addItem(Item item);
-    }
-
-    //use interface to override method
-    OnItemAdded onItemAdded = new OnItemAdded() {
-        @Override
-        public void addItem(Item item) {
-            list.add(item);
-            listCentral.addItem(item);
-            tableView.refresh();
-        }
-    };
-
-    public void addToList(String name, String description, LocalDate date){
-        //add new item to list
-        list.add(new Item(name, description, date, false));
-        //refresh table
-        tableView.refresh();
-    }
-
-    public void clickedSort(ActionEvent actionEvent) {
-        //call sort items from list central
-        listCentral.sortItems(choiceBox.getValue());
-    }
-
-    public void clickedClearList(ActionEvent actionEvent) {
-        listCentral.removeAllItems();
-    }
-
-    public void clickedRemoveItem(ActionEvent actionEvent) {
-        listCentral.removeItem(getTableIndex());
-    }
-
-    public void clickedMarkComplete(ActionEvent actionEvent) {
-        int index = tableView.getSelectionModel().getSelectedIndex();
-        listCentral.markComplete(index);
-    }
-
-    public int getTableIndex(){
-        int index = tableView.getSelectionModel().getSelectedIndex();
-        return index;
-    }
-
-    public void clickedMarkIncomplete(ActionEvent actionEvent) {
-    }
-
+    @FXML
     public void clickedEditItem(ActionEvent actionEvent) throws IOException {
         //open New Item Window
         FXMLLoader root = new  FXMLLoader(getClass().getResource("EditItemWindow.fxml"));
         Stage stage = new Stage(StageStyle.DECORATED);
         stage.setTitle("Edit Item");
         stage.setScene(new Scene(root.load()));
+        //set up controller
+        EditItemWindowController editController = root.getController();
+        editController.setOnItemEdited(onItemEdited);
         //show window
         stage.show();
     }
 
-    //set up interface for adding item
-    interface OnItemEdited{
-        void editItem(String name, String description, LocalDate date);
+    //edit items in/view of list
+    @FXML
+    public void clickedSort(ActionEvent actionEvent) {
+        //call sort items from list central
+        listCentral.sortItems(choiceBox.getValue());
     }
 
-    //override interface method
-    OnItemEdited onItemEdited = new OnItemEdited() {
-        @Override
-        public void editItem(String name, String description, LocalDate date) {
-            listCentral.editItemInfo(getTableIndex(), name, description, date);
-            tableView.refresh();
-        }
-    };
+    //clear current todo list
+    @FXML
+    public void clickedClearList(ActionEvent actionEvent) {
+        //call remove all items from list central
+        listCentral.removeAllItems();
+    }
 
+    //remove selected item
+    @FXML
+    public void clickedRemoveItem(ActionEvent actionEvent) {
+        // call remove item from list central
+        //use the table index as a parameter
+        listCentral.removeItem(getTableIndex());
+    }
+
+    //mark selected item complete
+    @FXML
+    public void clickedMarkComplete(ActionEvent actionEvent) {
+        //call mark complete from list central
+        //use the table index as a parameter
+        listCentral.markComplete(getTableIndex());
+        tableView.refresh();
+    }
+
+    @FXML
+    public void clickedMarkIncomplete(ActionEvent actionEvent) {
+        //call mark incomplete from list central
+        //use the table index as a parameter
+        listCentral.markIncomplete(getTableIndex());
+        tableView.refresh();
+    }
+
+    @FXML
     public void clickedSaveList(ActionEvent actionEvent) {
+        File savedList = fileChooser.showSaveDialog(new Stage());
+        if (savedList != null){
+            fileCentral.saveList(listCentral.getWholeList(), savedList);
+        }
     }
 
+    @FXML
     public void clickedLoadList(ActionEvent actionEvent) {
+        File chosenList = fileChooser.showOpenDialog(new Stage());
+        fileCentral.loadList(chosenList);
+        tableView.refresh();
     }
+
 }

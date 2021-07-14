@@ -49,6 +49,7 @@ public class ListCentral {
         //add loaded list
         list.addAll(newList);
         displayList.addAll(newList);
+        System.out.println(displayList);
         //return list
         return list;
     }
@@ -74,10 +75,6 @@ public class ListCentral {
         return list;
     }
 
-    public void getItemInfo(int index){
-        list.get(indexConverter(index));
-    }
-
     public Item editItemInfo(int index, String name, String description, LocalDate date){
         displayList.get(index).setName(name);
         displayList.get(index).setDescription(description);
@@ -90,9 +87,7 @@ public class ListCentral {
 
     public boolean markComplete(int index){
         displayList.get(index).setMark(true);
-        System.out.println(displayList.get(index));
         list.get(indexConverter(index)).setMark(true);
-        System.out.println(list.get(indexConverter(index)));
         return list.get(index).isMark();
     }
 
@@ -110,7 +105,7 @@ public class ListCentral {
             // determine if item is complete
             boolean complete = list.get(i).isMark();
             //sort by complete
-            if(sortBy.equals("Complete")){
+            if(sortBy.equals("Completed")){
                 if (complete) {
                     sorted.add(list.get(i));
                 }

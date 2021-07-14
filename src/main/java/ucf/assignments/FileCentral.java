@@ -15,15 +15,15 @@ import java.util.Scanner;
 
 public class FileCentral {
 
-    public void saveList(ObservableList<Item> todoList, String fileLocation){
-        //create file
-        File output = new File(fileLocation);
+    ListCentral listCentral = new ListCentral();
+
+    public void saveList(ObservableList<Item> todoList, File outputFile){
         //create time formatter
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         //implement a try catch method
         try {
             //set up file writer
-            FileWriter fileWriter = new FileWriter(output);
+            FileWriter fileWriter = new FileWriter(outputFile);
             PrintWriter writer = new PrintWriter(fileWriter);
             //write appropriate statements to file
             //go through array to print output to file
@@ -33,7 +33,6 @@ public class FileCentral {
                 writer.printf("%s %n", todoList.get(i).getDescription());
                 writer.printf("%s %n", todoList.get(i).getDate().format(formatter));
                 writer.printf("%b %n%n", todoList.get(i).isMark());
-
             }
             fileWriter.close();
         }
@@ -44,27 +43,30 @@ public class FileCentral {
         //return file
     }
 
-    public ObservableList loadList(String fileLocation){
+    public ObservableList loadList(File inputFile){
         //create observable list
-        ObservableList<Item> list= FXCollections.observableArrayList();
+        ObservableList<Item> todoList = FXCollections.observableArrayList();
         //load file
         try {
-            //takes in file info
-            File theList = new File(fileLocation);
-            Scanner in = new Scanner(theList);
+            Scanner in = new Scanner(inputFile);
             // reads next input from file
             while (in.hasNextLine()) {
+                //get data for an item
                 String name = in.nextLine();
                 String description = in.nextLine();
                 LocalDate dueDate = null;
                 dueDate = dueDate.parse(in.nextLine());
-                String blank = in.nextLine();
-                if (blank.equals("true") || blank.equals("false")){
+                String mark = in.nextLine();
+
+                if (mark.equals("true") || mark.equals("false")){
+                    //set file data to list
+                    todoList.add(new Item(name, description, dueDate, Boolean.parseBoolean(mark)));
                     in.nextLine();
                 }
-
-                //set file data to list
-                list.add(new Item(name, description, dueDate, false));
+                else {
+                    //set file data to list
+                    todoList.add(new Item(name, description, dueDate, false));
+                }
             }
         }
         //catch method to make sure file is found
@@ -72,8 +74,10 @@ public class FileCentral {
             System.out.println("File not found.");
             e.printStackTrace();
         }
+        //set list in list central
+        listCentral.setList(todoList);
         //return
-        return list;
+        return todoList;
     }
 
 }

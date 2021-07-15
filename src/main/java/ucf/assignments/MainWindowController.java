@@ -217,7 +217,7 @@ public class MainWindowController implements Initializable {
     @FXML
     public void clickedLoadList(ActionEvent actionEvent) {
         File chosenList = fileChooser.showOpenDialog(new Stage());
-        tableView.setItems(fileCentral.loadList(chosenList));
+        tableView.setItems(listCentral.setList(fileCentral.loadList(chosenList)));
     }
 
 }

@@ -43,7 +43,7 @@ public class FileCentral {
         //return file
     }
 
-    public ObservableList loadList(File inputFile){
+    public ObservableList<Item> loadList(File inputFile){
         //create observable list
         ObservableList<Item> todoList = FXCollections.observableArrayList();
         //load file

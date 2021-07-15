@@ -25,7 +25,7 @@ public class ListCentral {
     public int indexConverter(int index){
         int i = 0;
         //convert index
-        while (displayList.get(index) != list.get(i)){
+        while (!displayList.get(index).equals(list.get(i))){
             i++;
         }
         return i;
@@ -49,9 +49,8 @@ public class ListCentral {
         //add loaded list
         list.addAll(newList);
         displayList.addAll(newList);
-        System.out.println(displayList);
         //return list
-        return displayList;
+        return list;
     }
 
     public Item addItem(Item item){
@@ -61,15 +60,15 @@ public class ListCentral {
         return item;
     }
 
-    public ObservableList removeItem(int index){
+    public ObservableList<Item> removeItem(int index){
         // remove item from display list
         displayList.remove(index);
         // remove item from list
         list.remove(indexConverter(index));
-        return list;
+        return displayList;
     }
 
-    public ObservableList removeAllItems(){
+    public ObservableList<Item> removeAllItems(){
         //remove everything from every list
         displayList.remove(0, displayList.size());
         list.remove(0, list.size());
@@ -99,7 +98,7 @@ public class ListCentral {
         return list.get(index).isMark();
     }
 
-    public void sortItems(String sortBy){
+    public ObservableList<Item> sortItems(String sortBy){
         // create temp list for sorting
         ObservableList<Item> sorted = FXCollections.observableArrayList();
         for (int i = 0; i < list.size(); i++) {
@@ -126,5 +125,6 @@ public class ListCentral {
         displayList.remove(0, displayList.size());
         // set displayed list equal to sorted list
         displayList.addAll(sorted);
+        return sorted;
     }
 }

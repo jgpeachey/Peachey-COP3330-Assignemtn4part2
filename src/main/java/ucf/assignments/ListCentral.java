@@ -32,7 +32,7 @@ public class ListCentral {
     }
 
     //get the displayed list
-    public ObservableList<Item> getList(){
+    public ObservableList<Item> getDisplayList(){
         //return list
         return displayList;
     }
@@ -51,13 +51,14 @@ public class ListCentral {
         displayList.addAll(newList);
         System.out.println(displayList);
         //return list
-        return list;
+        return displayList;
     }
 
-    public void addItem(Item item){
+    public Item addItem(Item item){
         //add new item to list
         list.add(item);
         displayList.add(item);
+        return item;
     }
 
     public ObservableList removeItem(int index){

@@ -1,3 +1,8 @@
+/*
+ *  UCF COP3330 Summer 2021 Assignment 4 Solution
+ *  Copyright 2021 John Peachey
+ */
+
 package ucf.assignments;
 
 import javafx.collections.FXCollections;
@@ -84,7 +89,7 @@ public class MainWindowController implements Initializable {
         markColumn.setCellValueFactory(new PropertyValueFactory<Item, Boolean>("mark"));
 
         //load data from list
-        tableView.setItems(listCentral.getList());
+        tableView.setItems(listCentral.getDisplayList());
     }
 //misc methods
     public int getTableIndex(){
@@ -212,8 +217,7 @@ public class MainWindowController implements Initializable {
     @FXML
     public void clickedLoadList(ActionEvent actionEvent) {
         File chosenList = fileChooser.showOpenDialog(new Stage());
-        fileCentral.loadList(chosenList);
-        tableView.refresh();
+        tableView.setItems(fileCentral.loadList(chosenList));
     }
 
 }
